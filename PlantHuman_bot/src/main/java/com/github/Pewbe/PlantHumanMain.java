@@ -7,9 +7,11 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.awt.*;
+
 public class PlantHumanMain {
     public static void main(String[] args) {
-        String token = "NzUxODI1MTAzMjE3NzU0MTIy.X1OtsA.cyWscVi8d9IcWyf0UnABoJmz0hE";
+        String token = "NzUxODI1MTAzMjE3NzU0MTIy.X1OtsA.mda-6Z_B-MK3ABJLDinRekoyFm4";
         DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
 
         System.out.println("디스코드 로그인에 성공했어...!");
@@ -24,6 +26,10 @@ public class PlantHumanMain {
 
                 if( msg.contains("구글검색") ){
                     try {
+                        String target = msg.replace("식물인간 구글검색 ", "");
+                        String address = "https://www.google.com/search?q=" + target + "&sxsrf=ALeKk01E1xQOkydUupKtjyiL2IefoKBzjQ:1599377060465&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiSgq_s_9PrAhVEFqYKHdsWDqoQ_AUoAXoECBcQAw&cshid=1599377067782039&biw=1536&bih=775";
+                        Document doc = Jsoup.connect(address).header("User-Agent", "Chrome/19.0.1.84.52").get();
+                        String image = doc.select("img").text();
                         /*단어검색(이었던것)
                         String target = msg.replace("식물인간 단어검색 ", "");
                         String address = "https://dict.naver.com/search.nhn?dicQuery=" + target + "&query=" + target + "&target=dic&ie=utf8&query_utf=&isOnlyViewEE=";
@@ -41,15 +47,40 @@ public class PlantHumanMain {
                          */
                     } catch ( Exception e ) { e.printStackTrace(); }
                 }
+                else if( msg.contains("프사") ){
+                    try {
+                        String replaced = msg.replace("식물인간 프사 ", "");
+
+                        embed.setColor( Color.GREEN );
+                        embed.setImage( ev.getApi().getUserById( replaced.replaceAll("\\W", "") ).get().getAvatar() );
+                        embed.setFooter("이거 맞겠지.....?");
+
+                        ev.getChannel().sendMessage( embed );
+                    } catch ( Exception e ){
+                        e.printStackTrace();
+                        ev.getChannel().sendMessage("어라..? 제대로 된 명령어가 아닌가본데.....?");
+                    }
+                }
+                else if( msg.contains("사랑해") )
+                    ev.getChannel().sendMessage("헤에.....에...엣!?");
                 else if( msg.contains("안녕") )
                     ev.getChannel().sendMessage("안ㄴ....앗..이..인간..!?");
                 else if ( msg.contains("도움말") ) {
+                    embed.setColor( Color.GREEN );
                     embed.setTitle("식물인간 사용법");
+                    embed.setDescription("식물인간은 자잘한 기능들을 사용할 수 있는 기능성 봇입니다.\n종족은 아마도 나무입니다.");
+                    embed.addField("`식물인간 기능`", "자잘한 기능들에 대한 도움말을 보여줍니다.");
+                    embed.addField("`식물인간 게임`", "별거 없는 게임에 대한 도움말을 보여줍니다.");
+
+                    ev.getChannel().sendMessage( embed );
                 }
                 else{
                     ev.getChannel().sendMessage("에..어디보자..으음....그런 명령어는 없는걸....?");
                 }
             }
         });
+
+        api.addServerJoinListener( ev -> {
+        } );
     }
 }
